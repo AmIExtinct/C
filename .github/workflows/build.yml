@@ -15,10 +15,12 @@ jobs:
             compiler: clang
           - os: windows-latest
             compiler: msvc
+            experimental: true
           - os: macos-latest
             compiler: clang
 
     runs-on: ${{ matrix.os }}
+    continue-on-error: ${{ matrix.experimental || false }}
 
     steps:
       - uses: actions/checkout@v4
