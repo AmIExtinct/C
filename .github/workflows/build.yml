@@ -1,10 +1,24 @@
-name: Xmake Build
+name: Cross Building
 
 on: [push, pull_request]
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false # Keep other jobs running even if one fails
+      matrix:
+        # Environments here
+        include:
+          - os: ubuntu-latest
+            compiler: gcc
+          - os: ubuntu-latest
+            compiler: clang
+          - os: windows-latest
+            compiler: msvc
+          - os: macos-latest
+            compiler: clang
+
+    runs-on: ${{ matrix.os }}
 
     steps:
       - uses: actions/checkout@v4
@@ -14,7 +28,8 @@ jobs:
           xmake-version: latest
 
       - name: Configure
-        run: xmake f -m release
+        # This uses the compiler from the matrix to tell xmake what to do
+        run: xmake f --toolchain=${{ matrix.compiler }} -m release -y
 
       - name: Build
         run: xmake
