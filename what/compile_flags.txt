@@ -1,4 +1,0 @@
--Iheads
--Wall
--Wextra
---target=x86_64-w64-windows-gnu
