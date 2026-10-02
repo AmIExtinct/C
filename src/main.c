@@ -1,6 +1,11 @@
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <time.h>
+
+#ifdef _WIN32
+#include <windows.h>
+#endif
 
 
 void FileShit(const char *ass);
@@ -42,13 +47,21 @@ void FileShit(const char *ass){
          if (data[i] == '\n') {
             lines++;
          }
+#ifdef _WIN32
+         Sleep(0);
+#else
          nanosleep(&(struct timespec){0, 50*1000}, NULL);
+#endif
        } 
    }
    fclose(yourAss);
 
-   char *newAss;
-   asprintf(&newAss, "%s%s", ass, ".old");
+   size_t newAssSize = strlen(ass) + sizeof(".old");
+   char *newAss = malloc(newAssSize);
+   if (newAss == NULL) {
+      return;
+   }
+   snprintf(newAss, newAssSize, "%s.old", ass);
    rename(ass, newAss);
    printf("\n[OK] Slayed %d lines from %s\n", lines, newAss);
    free(newAss);
